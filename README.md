@@ -28,9 +28,7 @@ is shown to attain asymptotically exact coverage probability.
 Follow the code below to install the package. 
 You will need to install the [devtools](https://cran.r-project.org/package=devtools) package first in case you haven't. 
 
-    install.packages("devtools")
-    library(devtools)
-    install_github("captainyc/higrad")
+    devtools::install_github(repo = "captainyc/higrad", subdir="higrad")
 
 #### Reference
 
