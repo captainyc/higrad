@@ -58,6 +58,7 @@ The step size is set to be \code{eta*t^(-alpha)}.
 }
 \examples{
 \donttest{
+# fitting linear regression on a simulated dataset
 n <- 1e6
 d <- 50
 sigma <- 1
@@ -65,6 +66,9 @@ theta <- rep(0, d)
 x <- matrix(rnorm(n * d), n, d)
 y <- as.numeric(x \%*\% theta + rnorm(n, 0, sigma))
 fit <- higrad(x, y, model = "lm")
+# predict for 10 new samples
+newx <- matrix(rnorm(10 * d), 10, d)
+pred <- predict(fit, newx)
 }
 
 }
