@@ -89,4 +89,4 @@ for (k in 1:length(Ns)) {
   }
 }
 
-save(record, file = paste0('./record_', filename, '.RData'))
+save(record, file = paste0('./record_accuracy_', filename, '.RData'))

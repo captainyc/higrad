@@ -96,4 +96,4 @@ for (i in 1:num.repeat) {
   }
 }
 
-save(record, file = paste0("./record_", filename, '.RData'))
+save(record, file = paste0("./record_coverage_", filename, '.RData'))
