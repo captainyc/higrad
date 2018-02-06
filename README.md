@@ -4,6 +4,8 @@
 
 This is the R package for HiGrad (Hierarchical Incremental Gradient Descent), 
 an algorithm for statistical inference for online learning and stochastic approximation.
+Also included in this repository are the R codes for reproducing the results and plots
+of the simulation and real data study in Su & Zhu, 2018.
 
 #### Description
 
