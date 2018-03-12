@@ -29,6 +29,3 @@ A list with components
 \description{
 \code{predict} can be applied with a \code{higrad} object to obtain predictions and confidence intervals.
 }
-\details{
-asdf
-}

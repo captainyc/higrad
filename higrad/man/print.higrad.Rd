@@ -12,5 +12,5 @@
 \item{...}{additional print arguments.}
 }
 \description{
-Print the coefficents estimates obtained by HiGrad.
+Print the coefficients estimates obtained by HiGrad.
 }

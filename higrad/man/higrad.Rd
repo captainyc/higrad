@@ -7,7 +7,7 @@
 higrad(x, y, model = "lm", nsteps = nrow(x), nsplits = 2, nthreads = 2,
   step.ratio = 1, n0 = NA, skip = 0, eta = 1/2, alpha = 1/2,
   burnin = round(nsteps/10), start = rnorm(ncol(x), 0, 0.01),
-  replace = FALSE)
+  replace = FALSE, track = FALSE)
 }
 \arguments{
 \item{x}{input matrix of features. Each row is an observation vector, and each column is a feature.}
@@ -37,6 +37,8 @@ higrad(x, y, model = "lm", nsteps = nrow(x), nsplits = 2, nthreads = 2,
 \item{start}{starting values of the coefficients.}
 
 \item{replace}{logical; whether or not to sample the data with replacement.}
+
+\item{track}{logical; whether or not to store the entire path for plotting.}
 }
 \value{
 An object with S3 class \code{higrad}.
@@ -44,7 +46,7 @@ An object with S3 class \code{higrad}.
 \item{coefficients.bootstrap}{matrix of estimates of the coefficients along each HiGrad threads.}
 \item{model}{model type.}
 \item{Sigma0}{covariance structure \eqn{\Sigma} of the estimates.}
-\item{track}{entire path of the estimates along each thread. Can be used for diagnositic and check for convergence.}
+\item{track}{entire path of the estimates along each thread. Can be used for diagnostic and check for convergence.}
 }
 \description{
 \code{higrad} is used to implement HiGrad, an algorithm that conducts statistical inference for online learning.
@@ -52,7 +54,7 @@ An object with S3 class \code{higrad}.
 \details{
 HiGrad is designed to conduct statistical inference for online learning, without incurring additional computational cost compared with the vanilla SGD.
 The HiGrad procedure begins by performing SGD iterations for a while and then split the single thread into a few, and this procedure hierarchically operates in this fashion along each thread.
-With predictions provided by multiple threads in place, a t-based confidence interval is constructed by decorre- lating predictions using covariance structures given by the Ruppert–Polyak averaging scheme.
+With predictions provided by multiple threads in place, a t-based confidence interval is constructed by de-correlating predictions using covariance structures given by the Ruppert–Polyak averaging scheme.
 In order to implement HiGrad, a configuration of the tree structure needs to be specified. The default setting is a binary tree with 2 splits.
 The step size is set to be \code{eta*t^(-alpha)}.
 }
@@ -73,7 +75,7 @@ pred <- predict(fit, newx)
 
 }
 \references{
-Weijie Su and Yuancheng Zhu. (2018) \emph{Statistical Inference for Online Learning and Stochastic Approximation via Hierarchical Incremental Gradient Descent}. To appear.
+Weijie Su and Yuancheng Zhu. (2018) \emph{Statistical Inference for Online Learning and Stochastic Approximation via Hierarchical Incremental Gradient Descent}. \url{https://arxiv.org/abs/1802.04876}.
 }
 \seealso{
 See \code{\link{print.higrad}}, \code{\link{plot.higrad}}, \code{\link{predict.higrad}} for other methods for the \code{higrad} class.

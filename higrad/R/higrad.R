@@ -14,7 +14,7 @@
 #' @details
 #' HiGrad is designed to conduct statistical inference for online learning, without incurring additional computational cost compared with the vanilla SGD.
 #' The HiGrad procedure begins by performing SGD iterations for a while and then split the single thread into a few, and this procedure hierarchically operates in this fashion along each thread.
-#' With predictions provided by multiple threads in place, a t-based confidence interval is constructed by decorre- lating predictions using covariance structures given by the Ruppert–Polyak averaging scheme.
+#' With predictions provided by multiple threads in place, a t-based confidence interval is constructed by de-correlating predictions using covariance structures given by the Ruppert–Polyak averaging scheme.
 #' In order to implement HiGrad, a configuration of the tree structure needs to be specified. The default setting is a binary tree with 2 splits.
 #' The step size is set to be \code{eta*t^(-alpha)}.
 #'
@@ -32,14 +32,15 @@
 #' @param burnin number of steps as the burn-in period. The burn-in period is not accounted for in the total budget \code{nsteps}.
 #' @param start starting values of the coefficients.
 #' @param replace logical; whether or not to sample the data with replacement.
+#' @param track logical; whether or not to store the entire path for plotting.
 #'
-#' @references Weijie Su and Yuancheng Zhu. (2018) \emph{Statistical Inference for Online Learning and Stochastic Approximation via Hierarchical Incremental Gradient Descent}. To appear.
+#' @references Weijie Su and Yuancheng Zhu. (2018) \emph{Statistical Inference for Online Learning and Stochastic Approximation via Hierarchical Incremental Gradient Descent}. \url{https://arxiv.org/abs/1802.04876}.
 #' @return An object with S3 class \code{higrad}.
 #' \item{coefficients}{estimate of the coefficients.}
 #' \item{coefficients.bootstrap}{matrix of estimates of the coefficients along each HiGrad threads.}
 #' \item{model}{model type.}
 #' \item{Sigma0}{covariance structure \eqn{\Sigma} of the estimates.}
-#' \item{track}{entire path of the estimates along each thread. Can be used for diagnositic and check for convergence.}
+#' \item{track}{entire path of the estimates along each thread. Can be used for diagnostic and check for convergence.}
 #'
 #' @seealso See \code{\link{print.higrad}}, \code{\link{plot.higrad}}, \code{\link{predict.higrad}} for other methods for the \code{higrad} class.
 #'
@@ -61,7 +62,8 @@
 #' @export
 higrad <- function(x, y, model = "lm",
                    nsteps = nrow(x), nsplits = 2, nthreads = 2, step.ratio = 1, n0 = NA, skip = 0,
-                   eta = 1/2, alpha = 1/2, burnin = round(nsteps / 10), start = rnorm(ncol(x), 0, 0.01), replace = FALSE) {
+                   eta = 1/2, alpha = 1/2, burnin = round(nsteps / 10), start = rnorm(ncol(x), 0, 0.01),
+                   replace = FALSE, track = FALSE) {
   # check for missing or unsupported inputs
   if (missing(x)) {
     stop("'x' not specified")
@@ -121,7 +123,7 @@ higrad <- function(x, y, model = "lm",
   # create a matrix that stores stagewise average
   theta.avg <- array(NA, dim = c(B, d, K+1))
   # set up theta.track for plotting
-  theta.track <- matrix(start, d, 1)
+  if (track) theta.track <- matrix(start, d, 1)
 
   # zeroth stage
   # theta matrix for the current stage
@@ -140,7 +142,7 @@ higrad <- function(x, y, model = "lm",
     theta.avg[, , 1] <- matrix(start, B, d, byrow = TRUE)
   }
   # concatenate theta.track
-  theta.track <- cbind(theta.track, theta.current[, -1])
+  if (track) theta.track <- cbind(theta.track, theta.current[, -1])
   # set initial value for the next stage
   start <- matrix(rep(theta.current[, n0+1], each = Bs[1]), Bs[1], d)
 
@@ -161,7 +163,7 @@ higrad <- function(x, y, model = "lm",
     # average and store in theta.avg
     theta.avg[, , k+1] <- matrix(rep(apply(theta.current[, , -(1:(floor(ns[k] * skip)+1)), drop = FALSE], 1:2, mean), each = B / cumprod(Bs)[k]), B, d)
     # concatenate theta.track
-    theta.track <- cbind(theta.track, theta.current[1, , -1])
+    if (track) theta.track <- cbind(theta.track, theta.current[1, , -1])
     # set initial value for the next stage
     if (k < K) {
       start <- matrix(rep(theta.current[, , ns[k]+1], each = Bs[k+1]), cumprod(Bs)[k+1], d)
@@ -176,7 +178,7 @@ higrad <- function(x, y, model = "lm",
   out$coefficients.bootstrap <- thetas
   out$model <- model
   out$Sigma0 <- getSigma0(c(n0, ns), c(1, Bs), ws)
-  out$track <- theta.track
+  out$track <- ifelse(track, theta.track, NA)
 
   class(out) <- "higrad"
 
@@ -186,8 +188,6 @@ higrad <- function(x, y, model = "lm",
 #' @title Obtain Prediction and Confidence Intervals From a HiGrad Fit
 #'
 #' @description \code{predict} can be applied with a \code{higrad} object to obtain predictions and confidence intervals.
-#'
-#' @details asdf
 #'
 #' @param object a fitted object of class \code{higrad}.
 #' @param newx matrix of new values for \code{x} at which predictions are to be made.
@@ -237,7 +237,7 @@ predict.higrad <- function(object, newx, alpha = 0.05, type = "link", prediction
 
 #' @title Print a \code{higrad} Object
 #'
-#' @description Print the coefficents estimates obtained by HiGrad.
+#' @description Print the coefficients estimates obtained by HiGrad.
 #'
 #' @param x a fitted object of class \code{higrad}.
 #' @param ... additional print arguments.
@@ -256,17 +256,20 @@ print.higrad <- function(x, ...) {
 #'
 #' @export
 plot.higrad <- function(x, ...) {
-  track <- x$track
-  n <- ncol(track)
-  d <- nrow(track)
-  colors <- rainbow(d)
-  n.subsample <- round(seq(1, n, length = 100))
-  plot(1:n, track[1, ], type = "n", ylim = c(min(track), max(track)), xlab = "Step", ylab = "Coefficient estimates")
-  for (i in 1:d) {
-    lines(n.subsample, track[i, n.subsample], col = colors[i])
+  if (!is.na(x$track)) {
+    track <- x$track
+    n <- ncol(track)
+    d <- nrow(track)
+    colors <- rainbow(d)
+    n.subsample <- round(seq(1, n, length = 100))
+    track <- track[, n.subsample]
+    plot(n.subsample, track[1, ], type = "n", ylim = c(min(track), max(track)), xlab = "Step", ylab = "Coefficient estimates")
+    for (i in 1:d) {
+      lines(n.subsample, track[i, ], col = colors[i])
+    }
+    axis(side = 1)
+    axis(side = 2)
   }
-  axis(side = 1)
-  axis(side = 2)
 }
 
 # create configurations based on the input parameters
