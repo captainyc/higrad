@@ -5,7 +5,7 @@
 
 ## R CMD check results
 
-0 errors | 0 warnings | 1 note
+0 errors | 0 warnings | 0 note
 
 * This is a new release.
 
@@ -13,11 +13,12 @@
 
 This is a new release, so there are no reverse dependencies.
 
----
+## Resubmission
 
-* I have run R CMD check on the NUMBER downstream dependencies.
-  (Summary at ...). 
-  
-* FAILURE SUMMARY
+This is a resubmission. As per feedback from the 1st submission, we have:
 
-* All revdep maintainers were notified of the release on RELEASE DATE.
+* Removed the package name in the title.
+
+* Dropped the redundancy in the DESCRIPTION part. 
+
+* Included the reference in the DESCRIPTION part.

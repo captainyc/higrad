@@ -1,13 +1,14 @@
 Package: higrad
 Type: Package
-Title: HiGrad Statistical Inference for Online Learning and Stochastic Approximation
+Title: Statistical Inference for Online Learning and Stochastic Approximation via HiGrad
 Version: 0.1.0
 Authors@R: c(
     person("Weijie", "Su", email = "suw@wharton.upenn.edu", role = "aut"),
     person("Yuancheng", "Zhu", email = "yuancheng.zhu@gmail.com", role = c("aut", "cre")))
-Description: The higrad package implements the Hierarchical Incremental GRAdient Descent (HiGrad) algorithm.
-    HiGrad is a first-order algorithm for finding the minimizer of a function in online learning just like SGD and, 
-    in addition, this method attaches a confidence interval to assess the uncertainty of its predictions.
+Description: Implements the Hierarchical Incremental GRAdient Descent (HiGrad) algorithm,
+    a first-order algorithm for finding the minimizer of a function in online learning just like SGD.
+    In addition, this method attaches a confidence interval to assess the uncertainty of its predictions.
+    See Su and Zhu (2018) <arXiv:1802.04876> for details. 
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
