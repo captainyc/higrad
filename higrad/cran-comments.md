@@ -15,10 +15,18 @@ This is a new release, so there are no reverse dependencies.
 
 ## Resubmission
 
-This is a resubmission. As per feedback from the 1st submission, we have:
+This is a resubmission (3/13/2018). As per feedback from the 1st submission, we have
 
 * Removed the package name in the title.
 
 * Dropped the redundancy in the DESCRIPTION part. 
 
 * Included the reference in the DESCRIPTION part.
+
+## Resubmission \#2
+
+This is the second resubmission (3/14/2018). We have 
+
+* Explained all acronyms in the descriptions.
+
+* Unwrapped the example previously listed as donttest; shorten the running time to be < 5secs by downsizing the sample size and the dimension of the problem.
