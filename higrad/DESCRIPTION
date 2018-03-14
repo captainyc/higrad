@@ -6,7 +6,7 @@ Authors@R: c(
     person("Weijie", "Su", email = "suw@wharton.upenn.edu", role = "aut"),
     person("Yuancheng", "Zhu", email = "yuancheng.zhu@gmail.com", role = c("aut", "cre")))
 Description: Implements the Hierarchical Incremental GRAdient Descent (HiGrad) algorithm,
-    a first-order algorithm for finding the minimizer of a function in online learning just like SGD.
+    a first-order algorithm for finding the minimizer of a function in online learning just like stochastic gradient descent (SGD).
     In addition, this method attaches a confidence interval to assess the uncertainty of its predictions.
     See Su and Zhu (2018) <arXiv:1802.04876> for details. 
 License: GPL-3
