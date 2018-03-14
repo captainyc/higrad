@@ -9,10 +9,10 @@
 #' @title Fitting HiGrad
 #'
 #' @description
-#' \code{higrad} is used to implement HiGrad, an algorithm that conducts statistical inference for online learning.
+#' \code{higrad} is used to implement hierarchical incremental gradient descent (HiGrad), an algorithm that conducts statistical inference for online learning.
 #'
 #' @details
-#' HiGrad is designed to conduct statistical inference for online learning, without incurring additional computational cost compared with the vanilla SGD.
+#' HiGrad is designed to conduct statistical inference for online learning, without incurring additional computational cost compared with the vanilla stochastic gradient descent (SGD).
 #' The HiGrad procedure begins by performing SGD iterations for a while and then split the single thread into a few, and this procedure hierarchically operates in this fashion along each thread.
 #' With predictions provided by multiple threads in place, a t-based confidence interval is constructed by de-correlating predictions using covariance structures given by the Ruppert–Polyak averaging scheme.
 #' In order to implement HiGrad, a configuration of the tree structure needs to be specified. The default setting is a binary tree with 2 splits.
@@ -45,19 +45,19 @@
 #' @seealso See \code{\link{print.higrad}}, \code{\link{plot.higrad}}, \code{\link{predict.higrad}} for other methods for the \code{higrad} class.
 #'
 #' @examples
-#' \donttest{
 #' # fitting linear regression on a simulated dataset
-#' n <- 1e6
-#' d <- 50
-#' sigma <- 1
-#' theta <- rep(0, d)
+#' n <- 1e3
+#' d <- 10
+#' sigma <- 0.1
+#' theta <- rep(1, d)
 #' x <- matrix(rnorm(n * d), n, d)
 #' y <- as.numeric(x %*% theta + rnorm(n, 0, sigma))
 #' fit <- higrad(x, y, model = "lm")
+#' print(fit)
 #' # predict for 10 new samples
 #' newx <- matrix(rnorm(10 * d), 10, d)
 #' pred <- predict(fit, newx)
-#' }
+#' pred
 #'
 #' @export
 higrad <- function(x, y, model = "lm",
